@@ -2,8 +2,9 @@ from nonebot.rule import Rule
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Event, GroupMessageEvent, MessageEvent
 
-config = nonebot.get_driver().config
-white_lists = config.msa_white_list or []
+from configs import msa_white_lists
+
+white_lists = msa_white_lists or []
 
 def is_reply_to_sekai_file() -> Rule:
     async def _check(event: Event) -> bool:

@@ -4,8 +4,8 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-import aiohttp
 import orjson
+import aiohttp
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot import require, on_message, on_command
@@ -14,7 +14,7 @@ from nonebot.adapters.onebot.v11 import (Bot, MessageEvent, Message, MessageSegm
 # 导入本地模块
 from .rules import is_reply_to_sekai_file, is_valid_user
 from .configs import (TEMP_PATH, RESOURCE_PATH, TARGET_REGION, SHOW_HARVESTED, AES_KEY_BYTES, AES_IV_BYTES)
-# --- 导入新的解密函数 ---
+# --- 导入解密函数 ---
 from .utils.decrypter import decrypt_and_parse_bin_file
 # --------------------------
 from .utils.loader import LocalAssetLoader
@@ -122,7 +122,7 @@ async def handle_sekai_reply(bot: Bot, event: MessageEvent):
             result_message.append(MessageSegment.image(output_maps_path))
 
         if result_message:
-            await bot.reply(event=event, message=Message("解析完成！\n" + result_message), reply_message=True)
+            await bot.send(event=event, message=Message("解析完成！\n" + result_message), reply_message=True)
         else:
             await bot.send(event=event, message="图片生成失败，未找到有效结果。", reply_message=True)
 
