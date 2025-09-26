@@ -1,6 +1,6 @@
 # mysekaianalyser_plugin/__init__.py
 import os
-import shutil  # 新增：用于文件复制
+import shutil  
 import tempfile
 import subprocess
 import asyncio
@@ -148,7 +148,7 @@ async def process_sekai_file(bot: Bot, event: GroupMessageEvent):
                 await sekai_file_handler.finish("文件下载失败，请重新上传")
                 return
 
-            # 新增：将临时文件复制到解密脚本目录，并重命名为mysekai.bin（适配解密脚本的硬编码）
+            # 将临时文件复制到解密脚本目录，并重命名为mysekai.bin（适配解密脚本的硬编码）
             target_bin_path = PROJECT_ROOT / "mysekai.bin"
             try:
                 shutil.copy2(local_file, target_bin_path)  # 复制文件（保留元数据）
