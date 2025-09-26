@@ -2,7 +2,7 @@ from nonebot.rule import Rule
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Event, GroupMessageEvent, MessageEvent
 
-from configs import msa_white_lists
+from .configs import msa_white_lists
 
 white_lists = msa_white_lists or []
 

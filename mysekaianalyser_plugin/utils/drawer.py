@@ -4,8 +4,8 @@ from typing import List
 
 from PIL import Image, ImageDraw, ImageFont
 from extractor import SummaryDrawData, HarvestMapDrawData
+from .. import configs
 
-from ..configs import *
 
 DEFAULT_FONT_PATH = configs.DEFAULT_FONT_PATH
 DEFAULT_BOLD_FONT_PATH = configs.DEFAULT_BOLD_FONT_PATH

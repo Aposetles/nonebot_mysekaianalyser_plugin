@@ -1,4 +1,4 @@
-import configs
+from mysekaianalyser_plugin import configs
 from PIL import Image
 from datetime import datetime
 from typing import List, Tuple, Optional
