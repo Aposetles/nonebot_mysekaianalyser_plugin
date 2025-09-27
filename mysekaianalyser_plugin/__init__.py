@@ -9,10 +9,17 @@ import aiohttp
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from nonebot import require, on_message, on_command
-from nonebot.adapters.onebot.v11 import (Bot, MessageEvent, Message, MessageSegment)
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    MessageEvent,
+    Message,
+    MessageSegment,
+    GroupMessageEvent,
+    # 删除了这里的 FileSegment 导入
+)
 
 # 导入本地模块
-from .rules import is_reply_to_sekai_file, is_valid_user
+from .rules import is_valid_sekai_file, is_valid_user
 from .configs import (TEMP_PATH, RESOURCE_PATH, TARGET_REGION, SHOW_HARVESTED, AES_KEY_BYTES, AES_IV_BYTES)
 # --- 导入解密函数 ---
 from .utils.decrypter import decrypt_and_parse_bin_file
@@ -61,17 +68,25 @@ def generate_images_sync(json_path: Path, output_summary_path: Path, output_maps
     logger.info(f"图片生成完毕，耗时 {duration:.2f} 秒")
 
 
-sekai_handler = on_command(
-    "msa",
-    rule=is_reply_to_sekai_file() & is_valid_user(),
-    priority=5,
-    block=True
-)
+sekai_handler = on_message(rule=is_valid_user() & is_valid_sekai_file(), priority=1, block=False)
 
 @sekai_handler.handle()
-async def handle_sekai_reply(bot: Bot, event: MessageEvent):
-    file_seg = next(s for s in event.reply.message if s.type == "file" and s.data.get("file_name", "").endswith(".bin"))
-    file_url, file_name = file_seg.data.get("url"), file_seg.data.get("file_name")
+async def handle_sekai_file(bot: Bot, event: GroupMessageEvent):
+
+    start_time = datetime.now()
+    file_seg = next(
+        (
+            seg for seg in event.message
+            if seg.type == "file" and seg.data.get("file", "").endswith(".bin")
+        ),
+        None
+    )
+
+    if not file_seg:
+        return
+
+    file_name = file_seg.data.get("file")
+    file_url = file_seg.data.get("url")
 
     if not file_url:
         await sekai_handler.finish("无法获取文件下载链接。", reply_message=True)
@@ -87,6 +102,7 @@ async def handle_sekai_reply(bot: Bot, event: MessageEvent):
     output_maps_path = task_dir / "maps.png"
 
     try:
+        sekai_handler.block = True
         await bot.send(event=event, message="收到，正在为您解析 MySekai 文件...", reply_message=True)
 
         if not await download_file(file_url, local_bin_path):
@@ -122,7 +138,8 @@ async def handle_sekai_reply(bot: Bot, event: MessageEvent):
             result_message.append(MessageSegment.image(output_maps_path))
 
         if result_message:
-            await bot.send(event=event, message=Message("解析完成！\n" + result_message), reply_message=True)
+            duration = (datetime.now() - start_time).total_seconds()
+            await bot.send(event=event, message=Message(f"解析完成！\n耗时 {duration:.2f} 秒\n" + result_message), reply_message=True)
         else:
             await bot.send(event=event, message="图片生成失败，未找到有效结果。", reply_message=True)
 
@@ -130,6 +147,7 @@ async def handle_sekai_reply(bot: Bot, event: MessageEvent):
         logger.error(f"处理 MySekai 文件时发生未知异常: {e}", exc_info=True)
         await bot.send(event=event, message="处理时发生内部错误，请联系管理员。", reply_message=True)
     finally:
+        sekai_handler.block = False
         if task_dir.exists():
             shutil.rmtree(task_dir)
             logger.info(f"已清理临时目录: {task_dir}")

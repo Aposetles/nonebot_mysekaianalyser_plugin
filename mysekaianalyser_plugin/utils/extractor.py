@@ -1,9 +1,9 @@
-from mysekaianalyser_plugin import configs
+from .. import configs
 from PIL import Image
 from datetime import datetime
 from typing import List, Tuple, Optional
 from dataclasses import dataclass
-from loader import LocalAssetLoader, UNKNOWN_IMG
+from .loader import LocalAssetLoader, UNKNOWN_IMG
 
 SITE_ID_ORDER = (5, 7, 6, 8)
 MOST_RARE_MYSEKAI_RES = ["mysekai_material_5", "mysekai_material_12", "mysekai_material_20", "mysekai_material_24", "mysekai_fixture_121", "material_17", "material_170"]

@@ -3,7 +3,7 @@ import math
 from typing import List
 
 from PIL import Image, ImageDraw, ImageFont
-from extractor import SummaryDrawData, HarvestMapDrawData
+from .extractor import SummaryDrawData, HarvestMapDrawData
 from .. import configs
 
 
