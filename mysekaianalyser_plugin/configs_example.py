@@ -13,7 +13,6 @@ DEFAULT_HEAVY_FONT_PATH = PLUGIN_ROOT / "resources/fonts/SourceHanSansSC-Heavy.o
 
 # main
 INPUT_FILE = PLUGIN_ROOT / "mysekai.json"
-TARGET_REGION = "jp"
 SHOW_HARVESTED = True
 OUTPUT_SUMMARY_FILENAME = "output_summary.png"
 OUTPUT_MAPS_FILENAME = "output_maps.png"
