@@ -77,7 +77,7 @@ async def handle_sekai_file(bot: Bot, event: GroupMessageEvent):
     file_seg = next(
         (
             seg for seg in event.message
-            if seg.type == "file" and seg.data.get("file", "").endswith(".bin")
+            if seg.type == "file" and (seg.data.get("file", "").endswith(".bin") or seg.data.get("file_name", "").endswith(".bin"))
         ),
         None
     )
@@ -85,7 +85,7 @@ async def handle_sekai_file(bot: Bot, event: GroupMessageEvent):
     if not file_seg:
         return
 
-    file_name = file_seg.data.get("file")
+    file_name = file_seg.data.get("file") or file_seg.data.get("file_name")
     file_url = file_seg.data.get("url")
 
     if not file_url:

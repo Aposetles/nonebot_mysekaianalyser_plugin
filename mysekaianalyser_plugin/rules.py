@@ -16,7 +16,7 @@ def is_valid_sekai_file() -> Rule:
 
         for seg in event.message:
             if seg.type == "file":
-                file_name = seg.data.get("file", "")
+                file_name = seg.data.get("file", "") or seg.data.get("file_name", "")
 
                 file_url = seg.data.get("url")
 
